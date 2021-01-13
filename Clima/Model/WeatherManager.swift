@@ -10,7 +10,9 @@ import Foundation
 import UIKit
 
 protocol WeatherManagerDelegate {
-    func didUpdateWeather(weather: WeatherModel)
+    func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel)
+    
+    func didFailWithError(error: Error)
 }
 
 
@@ -24,23 +26,23 @@ struct WeatherManager {
         let urlString = "\(weatherURL)&q=\(cityName)"
         print(urlString)
         
-        performRequest(urlString: urlString)
+        performRequest(with: urlString)
     }
     
     
-    func performRequest(urlString: String){
+    func performRequest(with urlString: String){
         if let url = URL(string: urlString){
             let session = URLSession(configuration: .default)
             
             let task = session.dataTask(with: url) {(data, response, error) in
                 if error != nil {
-                    print(error)
+                    self.delegate?.didFailWithError(error: error!)
                     return
                 }
                 
                 if let safeData = data {
                     if let weather =  self.parseJSON(weatherData: safeData){
-                        self.delegate?.didUpdateWeather(weather: weather)
+                        self.delegate?.didUpdateWeather(self, weather: weather)
                     }
                 }
             }
@@ -67,7 +69,7 @@ struct WeatherManager {
             
             return weather
         } catch {
-            print(error)
+            self.delegate?.didFailWithError(error: Error.self as! Error)
             return nil
         }
     }
