@@ -16,6 +16,7 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
     
     @IBOutlet weak var searchTextField: UITextField!
     
+    var weatherManager = WeatherManager()
     
     @IBAction func searchPressed(_ sender: UIButton) {
         print(searchTextField.text!)
@@ -51,6 +52,9 @@ class WeatherViewController: UIViewController, UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
+        if let city = searchTextField.text {
+            weatherManager.fetchWeather(cityName: city)
+        }
         searchTextField.text = ""
     }
     
