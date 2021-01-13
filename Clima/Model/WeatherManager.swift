@@ -12,9 +12,13 @@ import UIKit
 struct WeatherManager {
     let weatherURL = "https://api.openweathermap.org/data/2.5/weather?appid=103e41e1f9fdd4e18a872b70f4a1c251&units=metric"
     
+    
+    
     func fetchWeather(cityName: String){
         let urlString = "\(weatherURL)&q=\(cityName)"
         print(urlString)
+        
+        performRequest(urlString: urlString)
     }
     
     
@@ -29,8 +33,7 @@ struct WeatherManager {
                 }
                 
                 if let safeData = data {
-                    let dataString = String(data: safeData, encoding: .utf8)
-                    print(dataString)
+                    self.parseJSON(weatherData: safeData)
                 }
             }
             task.resume()
@@ -39,6 +42,24 @@ struct WeatherManager {
     }
 
 
+    func parseJSON(weatherData: Data){
+        let decoder = JSONDecoder()
+        do {
+          let  decoderData = try decoder.decode(WeatherData.self, from: weatherData)
+            
+            let name = decoderData.name
+            let t = decoderData.main.temp
+            let description = decoderData.weather[0].description
+            let id = decoderData.weather[0].id
+            
+            let weather = WeatherModel(conditionId:id, cityName: name, temp: t)
+            print(weather.conditionName)
+            print(weather.tempString)
+        } catch {
+            print(error)
+        }
+    }
     
+   
 
 }
