@@ -8,7 +8,7 @@
 
 import UIKit
 
-class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManagerDelegate {
+class WeatherViewController: UIViewController {
 
     @IBOutlet weak var conditionImageView: UIImageView!
     @IBOutlet weak var temperatureLabel: UILabel!
@@ -18,30 +18,21 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
     
     var weatherManager = WeatherManager()
     
-    @IBAction func searchPressed(_ sender: UIButton) {
-        print(searchTextField.text!)
-        
-        searchTextField.endEditing(true)
-    }
-    
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+      
         weatherManager.delegate = self
         
         // self = current view controller
         searchTextField.delegate = self
     }
+}
 
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        print(searchTextField.text!)
-        searchTextField.endEditing(true)
 
-        return true
-    }
-    
+//MARK: - UITextFieldDelegate
+
+extension WeatherViewController: UITextFieldDelegate{
+ 
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool {
         if textField.text != "" {
             return true
@@ -59,7 +50,23 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         searchTextField.text = ""
     }
     
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        print(searchTextField.text!)
+        searchTextField.endEditing(true)
 
+        return true
+    }
+    
+    @IBAction func searchPressed(_ sender: UIButton) {
+        print(searchTextField.text!)
+        
+        searchTextField.endEditing(true)
+    }
+}
+
+//MARK: - WeatherManagerDelegate
+
+extension WeatherViewController: WeatherManagerDelegate{
     
     func didUpdateWeather(_ weatherManager: WeatherManager, weather: WeatherModel){
         //print(weather.temp)
@@ -76,4 +83,3 @@ class WeatherViewController: UIViewController, UITextFieldDelegate, WeatherManag
         print(error)
     }
 }
-
